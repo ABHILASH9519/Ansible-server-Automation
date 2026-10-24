@@ -1,0 +1,9 @@
+---
+- name: Configure Linux servers
+  hosts: linux_servers
+  become: true
+  gather_facts: true
+  roles:
+    - base
+    - operations_user
+    - nginx_site
