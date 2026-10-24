@@ -4,7 +4,7 @@ A role-based Ansible project for repeatable Linux baseline configuration and a m
 
 ## Status
 
-Initial repository sync. Automated structure tests and YAML parsing have been performed locally; Ansible runtime validation on a Linux target is still pending.
+Project structure and YAML regression tests are included in `tests/` and run in GitHub Actions alongside Ansible playbook syntax checks. A real deployment against a disposable Linux target is still pending.
 
 ## Structure
 
@@ -30,6 +30,20 @@ ansible-playbook -i inventories/local/hosts.yml playbooks/site.yml --syntax-chec
 
 For remote hosts, configure SSH credentials securely and review `group_vars/all.yml`. Do not commit secrets or run against production without a maintenance plan.
 
-## Verification caveat
+## Tests and verification
 
-A successful YAML parse is not equivalent to an Ansible syntax check or a successful server deployment. Those checks must be run in an Ansible-enabled environment against a disposable Linux VM before production use.
+Run the repository regression tests with:
+
+```bash
+python -m pip install -r requirements.txt pytest
+python -m pytest -q
+```
+
+Run Ansible syntax checks with:
+
+```bash
+ansible-playbook -i inventories/local/hosts.yml playbooks/site.yml --syntax-check
+ansible-playbook -i inventories/local/hosts.yml playbooks/validate.yml --syntax-check
+```
+
+GitHub Actions runs both sets of checks on pushes and pull requests. Syntax checks do not prove that configuration will work on every target OS, and neither test suite is a substitute for a deployment rehearsal on a disposable Linux VM. Do that before production use.
