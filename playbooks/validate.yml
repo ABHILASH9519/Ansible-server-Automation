@@ -1,0 +1,19 @@
+---
+- name: Validate managed web service
+  hosts: linux_servers
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Check Nginx configuration
+      ansible.builtin.command: nginx -t
+      changed_when: false
+    - name: Check local health endpoint
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ nginx_listen_port }}/healthz"
+        return_content: true
+        status_code: 200
+      register: health_response
+    - name: Assert health endpoint response
+      ansible.builtin.assert:
+        that:
+          - health_response.content | trim == 'ok'
