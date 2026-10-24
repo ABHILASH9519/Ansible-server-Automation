@@ -1,0 +1,44 @@
+---
+- name: Install Nginx package
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Ensure managed site root exists
+  ansible.builtin.file:
+    path: "{{ nginx_site_root }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Install managed landing page
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ nginx_site_root }}/index.html"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Validate and reload Nginx
+
+- name: Install managed Nginx site configuration
+  ansible.builtin.template:
+    src: site.conf.j2
+    dest: /etc/nginx/conf.d/ansible-managed-site.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Validate and reload Nginx
+
+- name: Remove Debian default site symlink when present
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  when: ansible_facts.os_family == 'Debian'
+  notify: Validate and reload Nginx
+
+- name: Ensure Nginx is enabled and started
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
