@@ -9,7 +9,7 @@ def test_documentation_and_workflow_include_safe_execution_guidance():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     runbook = (ROOT / "docs/safe-execution.md").read_text(encoding="utf-8")
     workflow = (ROOT / ".github/workflows/ansible-checks.yml").read_text(encoding="utf-8")
-    assert "disposable Linux target" in readme
+    assert "disposable VM" in readme
     assert "--check --diff" in runbook
     assert "pull_request" in workflow
 
