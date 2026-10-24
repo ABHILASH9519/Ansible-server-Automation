@@ -1,0 +1,16 @@
+server {
+    listen {{ nginx_listen_port }} default_server;
+    listen [::]:{{ nginx_listen_port }} default_server;
+    server_name {{ nginx_server_name }};
+    root {{ nginx_site_root }};
+    index index.html;
+
+    location = /healthz {
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
