@@ -1,0 +1,8 @@
+---
+- name: Create optional operations user
+  ansible.builtin.user:
+    name: "{{ operations_user_name }}"
+    shell: /bin/bash
+    create_home: true
+    state: present
+  when: create_operations_user | bool
