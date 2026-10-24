@@ -46,3 +46,29 @@ def test_nginx_template_and_workflow_files_exist():
     ]
     for path in required:
         assert (ROOT / path).is_file(), f"Missing required file: {path}"
+
+
+def test_defaults_keep_optional_user_creation_disabled_and_use_expected_port():
+    defaults = load_yaml("group_vars/all.yml")
+    assert defaults["create_operations_user"] is False
+    assert defaults["nginx_listen_port"] == 8080
+    assert defaults["nginx_site_root"] == "/var/www/ansible-managed-site"
+
+
+def test_nginx_health_endpoint_and_handlers_are_wired():
+    template = (ROOT / "roles/nginx_site/templates/site.conf.j2").read_text(encoding="utf-8")
+    handlers = load_yaml("roles/nginx_site/handlers/main.yml")
+    assert "location = /healthz" in template
+    assert 'return 200 "ok\\n";' in template
+    names = {handler["name"] for handler in handlers}
+    assert "Validate and reload Nginx" in names
+    assert "Reload Nginx" in names
+    validate_handler = next(h for h in handlers if h["name"] == "Validate and reload Nginx")
+    assert validate_handler["notify"] == "Reload Nginx"
+
+
+def test_production_inventory_is_an_example_not_a_real_target():
+    inventory = load_yaml("inventories/production/hosts.yml.example")
+    hosts = inventory["all"]["children"]["linux_servers"]["hosts"]
+    assert list(hosts) == ["web01.example.internal"]
+    assert hosts["web01.example.internal"]["ansible_host"] == "192.0.2.10"
