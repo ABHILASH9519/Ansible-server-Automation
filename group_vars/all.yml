@@ -1,0 +1,10 @@
+---
+# Review these values before running against any host.
+base_packages:
+  - curl
+  - ca-certificates
+nginx_listen_port: 8080
+nginx_server_name: _
+nginx_site_root: /var/www/ansible-managed-site
+create_operations_user: false
+operations_user_name: opsadmin
