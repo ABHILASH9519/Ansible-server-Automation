@@ -29,40 +29,15 @@ A role-based Ansible project for repeatable Linux baseline configuration and a m
 
 ## 🧭 Architecture
 
-```mermaid
-flowchart TD
-    Operator[Operator / CI] --> Inventory[Inventory + group_vars]
-    Inventory --> Playbook[playbooks/site.yml]
-    Playbook --> Base[base role]
-    Playbook --> Ops[operations_user role<br/>opt-in]
-    Playbook --> Nginx[nginx_site role]
-    Base --> Packages[Baseline packages]
-    Ops --> Account[Operations account]
-    Nginx --> Template[Managed config + HTML template]
-    Template --> Service[Nginx service]
-    Service --> Health["/healthz :8080"]
-    Tests[pytest + Ansible syntax checks] -. validates structure .-> Playbook
-    style Playbook fill:#DBEAFE,stroke:#2563EB,color:#1E3A8A
-    style Nginx fill:#DCFCE7,stroke:#16A34A,color:#14532D
-    style Tests fill:#F3E8FF,stroke:#9333EA,color:#581C87
-```
+![System architecture](docs/images/system-architecture.svg)
+
+[Open system architecture diagram](docs/images/system-architecture.svg)
 
 ## 🔄 Configuration workflow
 
-```mermaid
-flowchart LR
-    A[Review inventory and variables] --> B[Run syntax checks]
-    B --> C[Run pytest]
-    C --> D[Use check mode and diff]
-    D --> E{Change reviewed?}
-    E -- No --> F[Revise configuration]
-    F --> B
-    E -- Yes --> G[Apply to disposable test VM]
-    G --> H[Validate service and health endpoint]
-    H --> I[Record outcome / rollback if needed]
-    style E fill:#FEF3C7,stroke:#D97706,color:#78350F
-    style G fill:#DCFCE7,stroke:#16A34A,color:#14532D
-```
+![Workflow diagram](docs/images/configuration-workflow.svg)
+
+[Open workflow diagram](docs/images/configuration-workflow.svg)
 
 ## 📊 Status and verification
 
