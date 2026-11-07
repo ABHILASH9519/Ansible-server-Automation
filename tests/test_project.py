@@ -25,6 +25,19 @@ def test_validation_playbook_has_a_task_list():
     assert playbook[0]["tasks"]
 
 
+def test_validation_playbook_checks_nginx_service_state():
+    playbook = load_yaml("playbooks/validate.yml")
+    tasks = playbook[0]["tasks"]
+    assert any("service_facts" in task for task in tasks)
+    service_check = next(
+        task for task in tasks
+        if task.get("name") == "Assert Nginx is enabled and running"
+    )
+    assert "'nginx.service' in ansible_facts.services" in service_check["assert"]["that"]
+    assert "ansible_facts.services['nginx.service'].state == 'running'" in service_check["assert"]["that"]
+    assert "ansible_facts.services['nginx.service'].status == 'enabled'" in service_check["assert"]["that"]
+
+
 def test_role_task_and_handler_files_are_valid_yaml_lists():
     paths = [
         "roles/base/tasks/main.yml",
