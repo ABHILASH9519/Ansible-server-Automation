@@ -28,7 +28,7 @@ def test_validation_playbook_has_a_task_list():
 def test_validation_playbook_checks_nginx_service_state():
     playbook = load_yaml("playbooks/validate.yml")
     tasks = playbook[0]["tasks"]
-    assert any("service_facts" in task for task in tasks)
+    assert any("ansible.builtin.service_facts" in task for task in tasks)
     service_check = next(
         task for task in tasks
         if task.get("name") == "Assert Nginx is enabled and running"
