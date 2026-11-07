@@ -33,9 +33,9 @@ def test_validation_playbook_checks_nginx_service_state():
         task for task in tasks
         if task.get("name") == "Assert Nginx is enabled and running"
     )
-    assert "'nginx.service' in ansible_facts.services" in service_check["assert"]["that"]
-    assert "ansible_facts.services['nginx.service'].state == 'running'" in service_check["assert"]["that"]
-    assert "ansible_facts.services['nginx.service'].status == 'enabled'" in service_check["assert"]["that"]
+    assert "'nginx.service' in ansible_facts.services" in service_check["ansible.builtin.assert"]["that"]
+    assert "ansible_facts.services['nginx.service'].state == 'running'" in service_check["ansible.builtin.assert"]["that"]
+    assert "ansible_facts.services['nginx.service'].status == 'enabled'" in service_check["ansible.builtin.assert"]["that"]
 
 
 def test_role_task_and_handler_files_are_valid_yaml_lists():
