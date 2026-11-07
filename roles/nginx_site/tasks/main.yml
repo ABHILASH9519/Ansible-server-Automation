@@ -1,4 +1,16 @@
 ---
+- name: Validate Nginx role inputs before changing the host
+  ansible.builtin.assert:
+    that:
+      - nginx_listen_port | int >= 1
+      - nginx_listen_port | int <= 65535
+      - nginx_site_root is match('^/')
+      - nginx_server_name is match('^[A-Za-z0-9*._-]+$')
+    fail_msg: >-
+      nginx_listen_port must be between 1 and 65535, nginx_site_root must be
+      an absolute path, and nginx_server_name may contain only hostname
+      characters, dots, underscores, asterisks and hyphens.
+
 - name: Install Nginx package
   ansible.builtin.package:
     name: nginx
